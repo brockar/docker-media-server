@@ -1,0 +1,81 @@
+version: "3.7"
+services: 
+  plex:
+    image: linuxserver/plex
+    container_name: plex
+    expose:
+      - 32400
+      - 33400
+    # Uncomment if you do NOT use network_mode: "host". (IF NOT USE LINUX)
+    # ports:
+    #  - 32400:32400
+    #  - 33400:33400
+    environment:
+      - TZ=America/Argentina/Mendoza #U can change your timezone in all services (TZ)
+      - VERSION=docker
+      - PLEX_CLAIM= #optional 
+    volumes:
+      - /home/brockar/shared/media-server/Plex Media Server:/root/Library/Application Support/Plex Media Server
+      - /home/brockar/shared/media-server/media:/media
+      - /home/brockar/shared/media-server/tmp:/tmp
+      - /home/brockar/shared/media-server/plex/config:/config
+    restart: unless-stopped
+    network_mode: "host" # Only works on Linux
+  sonarr:
+    image: lscr.io/linuxserver/sonarr:latest
+    container_name: sonarr
+    environment:
+      - PUID=1000
+      - PGID=1000
+      - TZ=America/Argentina/Mendoza
+    volumes:
+      - /home/brockar/shared/media-server/sonarr:/config
+      - /home/brockar/shared/media-server/media/tv:/tv #optional
+      - /home/brockar/shared/media-server/torrents:/downloads #optional
+    ports:
+      - 8989:8989
+    restart: unless-stopped
+  qbittorrent:
+    image: lscr.io/linuxserver/qbittorrent:latest
+    container_name: qbittorrent
+    environment:
+      - PUID=1000
+      - PGID=1000
+      - TZ=America/Argentina/Mendoza
+      - WEBUI_PORT=8080
+    volumes:
+      - /home/brockar/shared/media-server/qb:/config
+      - /home/brockar/shared/media-server/torrents:/downloads
+    ports:
+      - 8080:8080
+      - 6881:6881
+      - 6881:6881/udp
+    restart: unless-stopped
+  radarr:
+    image: lscr.io/linuxserver/radarr:latest
+    container_name: radarr
+    environment:
+      - PUID=1000
+      - PGID=1000
+      - TZ=America/Argentina/Mendoza
+    volumes:
+      - /home/brockar/shared/media-server/radarr:/config
+      - /home/brockar/shared/media-server/media/movies:/movies #optional
+      - /home/brockar/shared/media-server/torrents:/downloads #optional
+    ports:
+      - 7878:7878
+    restart: unless-stopped
+  jackett:
+    image: lscr.io/linuxserver/jackett:latest
+    container_name: jackett
+    environment:
+      - PUID=1000
+      - PGID=1000
+      - TZ=America/Argentina/Mendoza
+      - AUTO_UPDATE=true #optional
+    volumes:
+      - /home/brockar/shared/media-server/jackett:/config
+      - /home/brockar/shared/media-server/torrents:/downloads
+    ports:
+      - 9117:9117
+    restart: unless-stopped
