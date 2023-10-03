@@ -89,7 +89,7 @@ docker run -d -p 8000:8000 -p 9443:9443 --name portainer --restart=always -v /va
 ```
 >By default, Portainer generates and uses a self-signed SSL certificate to secure port 9443
 
-Portainer Server has now been installed. You can check to see whether the Portainer Server container has started by running `docker ps`:
+Portainer Server has now been installed. You can check to see whether the Portainer Server container has started by running `docker ps`.
 
 ### Logging In
 Now that the installation is complete, you can log into your Portainer Server instance by opening a web browser and going to:
@@ -103,35 +103,35 @@ Done!.
 
 # Config to auto download.
 ## General
-Configure Jackett (localhost:9117) to obtain the indexers (from where the torrents are obtained).
-Add some (1337x, EZTV for example) and save them.
+Configure Jackett (localhost:9117) to obtain the indexers (from where the torrents are obtained).  
+Add some (1337x, EZTV for example) and save them.  
   
-From this page we are going to grab the Torznab Feed and the KEY API.
+From this page we are going to grab the Torznab Feed and the KEY API.  
 
-Configure qbitorrent to download at the speeds you want at the times you want.
+Configure qbitorrent to download at the speeds you want at the times you want.  
 (localhost:8080)
 
 Configuration > Speed > Alternative speed limits. 
 Select the speeds.
-Check " Schedule the use of alternative rate limits " and select the schedules.
-
+Check " Schedule the use of alternative rate limits " and select the schedules.  
+  
 Save it.
 
 ## Sonarr / (TV/Series)
-(localhost:8989)
-Settings > Indexers.  
-Add the indexers from Jackett.  
-Just select TVs, not movies.  
+(localhost:8989)  
+Settings > Indexers.    
+Add the indexers from Jackett.    
+Just select TVs, not movies.    
 
-You can also configure the rest as you wish.  
+You can also configure the rest as you wish.    
 
 ## Radarr / (Movies)
-(localhost:7878/)
-Do the same as in Sonar but with series.
+(localhost:7878/)  
+Do the same as in Sonar but with series.  
 
 ## Download 
-Now you just have to add the series (Sonarr) you want to watch and the movies (Radarr).
-
-You can view the status of downloads in the applications themselves or in qbittorrent.
-
+Now you just have to add the series (Sonarr) you want to watch and the movies (Radarr).  
+  
+You can view the status of downloads in the applications themselves or in qbittorrent.  
+  
 # Enjoy your content (and seed it!).
