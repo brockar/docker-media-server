@@ -100,3 +100,38 @@ https://localhost:9443
 You can add this `docker-compose.yaml` to **App Template** and deploy.  
 
 Done!.
+
+# Config to auto download.
+## General
+Configure Jackett (localhost:9117) to obtain the indexers (from where the torrents are obtained).
+Add some (1337x, EZTV for example) and save them.
+  
+From this page we are going to grab the Torznab Feed and the KEY API.
+
+Configure qbitorrent to download at the speeds you want at the times you want.
+(localhost:8080)
+
+Configuration > Speed > Alternative speed limits. 
+Select the speeds.
+Check " Schedule the use of alternative rate limits " and select the schedules.
+
+Save it.
+
+## Sonarr / (TV/Series)
+(localhost:8989)
+Settings > Indexers.  
+Add the indexers from Jackett.  
+Just select TVs, not movies.  
+
+You can also configure the rest as you wish.  
+
+## Radarr / (Movies)
+(localhost:7878/)
+Do the same as in Sonar but with series.
+
+## Download 
+Now you just have to add the series (Sonarr) you want to watch and the movies (Radarr).
+
+You can view the status of downloads in the applications themselves or in qbittorrent.
+
+# Enjoy your content (and seed it!).
