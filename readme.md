@@ -136,3 +136,4 @@ You can view the status of downloads in the applications themselves or in qbitto
   
 # Enjoy your content (and seed it!).
 at http://localhost:32400/web/
+or on your TV / Mobile.
