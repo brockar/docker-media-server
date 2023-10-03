@@ -135,3 +135,4 @@ Now you just have to add the series (Sonarr) you want to watch and the movies (R
 You can view the status of downloads in the applications themselves or in qbittorrent.  
   
 # Enjoy your content (and seed it!).
+at http://localhost:32400/web/
