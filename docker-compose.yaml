@@ -1,26 +1,27 @@
 version: "3.7"
-services: 
-  plex:
-    image: linuxserver/plex
-    container_name: plex
-    expose:
-      - 32400
-      - 33400
-    # Uncomment if you do NOT use network_mode: "host". (IF NOT USE LINUX)
-    # ports:
-    #  - 32400:32400
-    #  - 33400:33400
+services:
+  jellyfin:
+    image: lscr.io/linuxserver/jellyfin:latest
+    container_name: jellyfin
+    devices:
+      - /dev/dri:/dev/dri
     environment:
-      - TZ=America/Argentina/Mendoza #U can change your timezone in all services (TZ)
-      - VERSION=docker
-      - PLEX_CLAIM= #optional 
+      - PUID=1000
+      - PGID=1000
+      - TZ=America/Argentina/Mendoza
     volumes:
-      - /home/brockar/shared/media-server/Plex Media Server:/root/Library/Application Support/Plex Media Server
-      - /home/brockar/shared/media-server/media:/media
-      - /home/brockar/shared/media-server/tmp:/tmp
-      - /home/brockar/shared/media-server/plex/config:/config
+      - /home/user/media-server/jellyfin/config:/config
+      - /home/user/media-server/media/tv:/data/tvshows
+      - /home/user/media-server/media/movies:/data/movies
+    ports:
+      - 8096:8096
+      - 8920:8920
+      - 7359:7359/udp
+      - 1900:1900/udp
+    labels:
+      icon: https://cdn.jsdelivr.net/gh/IceWhaleTech/CasaOS-AppStore@main/Apps/Jellyfin/icon.png
+    network_mode: bridge
     restart: unless-stopped
-    network_mode: "host" # Only works on Linux
   sonarr:
     image: lscr.io/linuxserver/sonarr:latest
     container_name: sonarr
@@ -29,11 +30,39 @@ services:
       - PGID=1000
       - TZ=America/Argentina/Mendoza
     volumes:
-      - /home/brockar/shared/media-server/sonarr:/config
-      - /home/brockar/shared/media-server/media/tv:/tv #optional
-      - /home/brockar/shared/media-server/torrents:/downloads #optional
+      - /home/brockar/media-server/sonarr:/config
+      - /home/brockar/media-server/media/tv:/tv
+      - /home/brockar/media-server/torrents:/downloads
     ports:
       - 8989:8989
+    restart: unless-stopped
+  radarr:
+    image: lscr.io/linuxserver/radarr:latest
+    container_name: radarr
+    environment:
+      - PUID=1000
+      - PGID=1000
+      - TZ=America/Argentina/Mendoza
+    volumes:
+      - /home/brockar/media-server/radarr:/config
+      - /home/brockar/media-server/media/movies:/movies
+      - /home/brockar/media-server/torrents:/downloads
+    ports:
+      - 7878:7878
+    restart: unless-stopped
+  lidarr:
+    image: lscr.io/linuxserver/lidarr:latest
+    container_name: lidarr
+    environment:
+      - PUID=1000
+      - PGID=1000
+      - TZ=America/Argentina/Mendoza
+    volumes:
+      - /home/brockar/media-server/lidarr:/config
+      - /home/brockar/media-server/media/music:/music
+      - /home/brockar/media-server/torrents:/downloads
+    ports:
+      - 8686:8686
     restart: unless-stopped
   qbittorrent:
     image: lscr.io/linuxserver/qbittorrent:latest
@@ -44,26 +73,12 @@ services:
       - TZ=America/Argentina/Mendoza
       - WEBUI_PORT=8080
     volumes:
-      - /home/brockar/shared/media-server/qb:/config
-      - /home/brockar/shared/media-server/torrents:/downloads
+      - /home/brockar/media-server/qb:/config
+      - /home/brockar/media-server/torrents:/downloads
     ports:
       - 8080:8080
       - 6881:6881
       - 6881:6881/udp
-    restart: unless-stopped
-  radarr:
-    image: lscr.io/linuxserver/radarr:latest
-    container_name: radarr
-    environment:
-      - PUID=1000
-      - PGID=1000
-      - TZ=America/Argentina/Mendoza
-    volumes:
-      - /home/brockar/shared/media-server/radarr:/config
-      - /home/brockar/shared/media-server/media/movies:/movies #optional
-      - /home/brockar/shared/media-server/torrents:/downloads #optional
-    ports:
-      - 7878:7878
     restart: unless-stopped
   jackett:
     image: lscr.io/linuxserver/jackett:latest
@@ -74,8 +89,53 @@ services:
       - TZ=America/Argentina/Mendoza
       - AUTO_UPDATE=true #optional
     volumes:
-      - /home/brockar/shared/media-server/jackett:/config
-      - /home/brockar/shared/media-server/torrents:/downloads
+      - /home/brockar/media-server/jackett:/config
+      - /home/brockar/media-server/torrents:/downloads
     ports:
       - 9117:9117
+    restart: unless-stopped
+  flaresolverr:
+    image: ghcr.io/flaresolverr/flaresolverr:latest
+    container_name: flaresolverr
+    environment:
+      - CAPTCHA_SOLVER=none
+      - GPG_KEY=A035C8C19219BA821ECEA86B64E628F8D684696D
+      - LANG=C.UTF-8
+      - LOG_HTML=false
+      - LOG_LEVEL=info
+      - PATH=/usr/local/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin
+      - PYTHON_GET_PIP_SHA256=dfe9fd5c28dc98b5ac17979a953ea550cec37ae1b47a5116007395bfacff2ab9
+      - PYTHON_GET_PIP_URL=https://github.com/pypa/get-pip/raw/dbf0c85f76fb6e1ab42aa672ffca6f0a675d9ee4/public/get-pip.py
+      - PYTHON_PIP_VERSION=24.0
+      - PYTHON_SETUPTOOLS_VERSION=65.5.1
+      - PYTHON_VERSION=3.11.8
+      - TZ=America/Argentina/Mendoza
+    ports:
+      - "${PORT:-8191}:8191"
+    command:
+      - /usr/local/bin/python
+      - -u
+      - /app/flaresolverr.py
+    network_mode: bridge
+    restart: unless-stopped
+  wg-easy:
+    image: ghcr.io/wg-easy/wg-easy
+    container_name: wg-easy
+    environment:
+      - PASSWORD=casaos # SET YOUR PASS HERE
+      - WG_DEFAULT_DNS=1.1.1.1
+      - WG_HOST=casaos.local # SET UP YOUR HOSTNAME HERE
+      - WG_PORT=51820
+      - TZ=America/Argentina/Mendoza
+    hostname: wg-easy
+    ports:
+      - 51820:51820/udp
+    cap_add:
+      - NET_ADMIN
+      - SYS_MODULE
+    sysctls:
+      net.ipv4.conf.all.src_valid_mark: "1"
+      net.ipv4.ip_forward: "1"
+    volumes:
+      - /home/brockar/media-server/wireguard:/etc/wireguard
     restart: unless-stopped
