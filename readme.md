@@ -1,10 +1,26 @@
 # Sumary
 
+
+# Resume
+We are going to set up a server so you can have a **multimedia center** in your home and you can also **make your backups** of important stuff in the same place!
+Multimedia: 
+- Movies
+- TV
+- Music
+
+# Recommended:
+- Set this up on a laptop or cpu that you don't use and can be on all day.
+- For the system you only need 30gb, the rest will be for your files.
+- Connect the laptop/pc via ethernet, wifi can get slow or slow down your wifi for all other uses.
+- Do not open ports, use WireGuard.
+- Seed the files at least 1.0 ratio.
+
 # Requeriments
+- [debian/debian based distro](https://brockar.github.io/easy-download-debian/)
 - [docker](https://docs.docker.com/engine/install/ubuntu/)
 - [docker-compose](https://docs.docker.com/compose/install/standalone/)
-- portainer (optional)
 
+--- 
 ## Install docker / docker-compose
 ### docker
 [resource](https://docs.docker.com/engine/install/ubuntu/).  
