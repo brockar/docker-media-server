@@ -1,5 +1,5 @@
 - [Resume](#resume)
-- [Recommended:](#recommended)
+- [Recommended](#recommended)
 - [Requirements](#requirements)
   - [Install CasaOS](#install-casaos)
   - [Install the rest of apps](#install-the-rest-of-apps)
@@ -9,9 +9,10 @@
   - [Sonarr / (TV/Series)](#sonarr--tvseries)
   - [Radarr / (Movies)](#radarr--movies)
   - [Download](#download)
-- [Enjoy your content (and seed it!).](#enjoy-your-content-and-seed-it)
+  - [Enjoy your content (and seed it!).](#enjoy-your-content-and-seed-it)
 - [How to use](#how-to-use)
   - [File sharing and backup](#file-sharing-and-backup)
+  - [Media](#media)
 - [Extra](#extra)
   - [Portainer](#portainer)
     - [Logging In](#logging-in)
@@ -30,7 +31,7 @@ Multimedia:
 - TV
 - Music
 
-# Recommended:
+# Recommended
 
 - Set this up on a laptop or cpu that you don't use and can be on all day.
 - Install Debian without GUI (GNOME), this will consume less resources and you won't need it.
@@ -44,8 +45,8 @@ Multimedia:
 - [debian/debian based distro](https://brockar.github.io/easy-download-debian/)
 - [your user with sudo](https://gcore.com/learning/how-to-add-user-to-sudoers-in-debian/)
 - git and curl (`sudo apt install git curl`)
-- docker and docker compose.
-- static ip
+- docker and docker compose. [CasaOS](#install-casaos) or [Standalone](#install-docker-and-docker-compose)
+- [Static ip](#static-ip)
 
 ---
 
@@ -103,28 +104,64 @@ Here we have all ready, now just
 docker-compose up -d
 ```
 
-U can enter into apps from CasaOS or `host:port`.
+U can enter into apps from CasaOS or `ip:port`.
 
 ## Static ip
 
----
+```bash
+ip a
+```
+
+Look for enXXX: inet , for example eno1 o enp1s0: `192.168.100.X`.
+
+Now configure to static your ip
+
+```bash
+sudo nano /etc/network/interfaces
+```
+
+from
+
+```bash
+# The loopback network interface
+auto lo
+iface lo inet loopback
+
+# The primary network interface
+auto enp1s0
+iface enp1s0 inet dhcp
+```
+
+to
+
+```bash
+# The loopback network interface
+auto lo
+iface lo inet loopback
+
+#The primary network interface
+auto enp1s0
+iface enp1s0 inet static
+  address 192.168.100.100 # Select your ip, i recommend .100, u can select from 2 to 255 but if is low, can fails.
+  netmask 255.255.255.0
+  gateway 192.168.100.1 # The same as your initial ip but with an 1 at the least
+```
 
 # Config to auto download.
 
 ## General
 
-Configure Jackett (localhost:9117) to obtain the indexers (from where the torrents are obtained).  
+Configure **Jackett** (localhost:9117) to obtain the indexers (from where the torrents are obtained).  
 Add some (1337x, EZTV for example) and save them.
 
-From this page we are going to grab the Torznab Feed and the KEY API.
+From this page we are going to grab the Torznab Feed and the KEY API for Sonarr, Radarr and Lidarr.
 
-Configure qbitorrent to download at the speeds you want at the times you want.  
+Configure **qBitorrent** to download at the speeds you want at the times you want.  
 (localhost:8080)
 
-Configuration > Speed > Alternative speed limits.
-Select the speeds.
-Check " Schedule the use of alternative rate limits " and select the schedules.
-
+Configuration > Speed > Alternative speed limits.  
+Select the speeds.  
+Check `Schedule the use of alternative rate limits` and select the schedules.  
 Save it.
 
 ## Sonarr / (TV/Series)
@@ -143,16 +180,13 @@ Do the same as in Sonar but with series.
 
 ## Download
 
-Now you just have to add the series (Sonarr) you want to watch and the movies (Radarr).
+Now you just have to add the series (Sonarr) you want to watch and the movies (Radarr) or music (Lidarr).
 
-You can view the status of downloads in the applications themselves or in qbittorrent.
+You can view the status of downloads in the applications themselves or in qBittorrent.
 
-# Enjoy your content (and seed it!).
+## Enjoy your content (and seed it!).
 
-at http://localhost:32400/web/
-or on your TV / Mobile.
-
----
+at http://localhost:8097 or on your TV / Mobile.
 
 # How to use
 
@@ -161,13 +195,18 @@ or on your TV / Mobile.
 On CasaOS, **Files** app u can select and share folders on your network (it uses **samba**).  
 I **recommend** use `/home/user/` and not `/DATA/`.
 
----
+## Media
+
+Search for the content you want to download in its respective application.  
+Wait for it to download.  
+Watch it on Jellyfin.
 
 # Extra
 
 ## Portainer
 
 [resource](https://docs.portainer.io/start/install-ce/server/docker).  
+A management tool for Docker.  
 First, create the volume that Portainer Server will use to store its database:
 
 ```
