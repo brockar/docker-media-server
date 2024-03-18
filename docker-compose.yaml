@@ -139,3 +139,14 @@ services:
     volumes:
       - /home/brockar/media-server/wireguard:/etc/wireguard
     restart: unless-stopped
+  jellyseerr:
+       image: fallenbagel/jellyseerr:latest
+       container_name: jellyseerr
+       environment:
+            - LOG_LEVEL=debug
+            - TZ=America/Argentina/Mendoza
+       ports:
+            - 5055:5055
+       volumes:
+            - /home/brockar/media-server/jellyseerr:/app/config
+       restart: unless-stopped
