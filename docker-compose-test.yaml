@@ -1,0 +1,126 @@
+services:
+  jellyfin:
+    image: lscr.io/linuxserver/jellyfin:latest
+    container_name: jellyfin
+    devices:
+      - /dev/dri:/dev/dri
+    environment:
+      - PUID=1000
+      - PGID=1000
+      - TZ=America/Argentina/Mendoza
+    volumes:
+      - /home/user/media-server/jellyfin/config:/config
+      - /home/user/media-server/media/tv:/data/tvshows
+      - /home/user/media-server/media/movies:/data/movies
+    ports:
+      - 8096:8096
+      - 8920:8920
+      - 7359:7359/udp
+      - 1900:1900/udp
+    labels:
+      icon: https://cdn.jsdelivr.net/gh/IceWhaleTech/CasaOS-AppStore@main/Apps/Jellyfin/icon.png
+    network_mode: bridge
+    restart: unless-stopped
+  sonarr:
+    image: lscr.io/linuxserver/sonarr:latest
+    container_name: sonarr
+    environment:
+      - PUID=1000
+      - PGID=1000
+      - TZ=America/Argentina/Mendoza
+    volumes:
+      - /home/user/media-server/sonarr:/config
+      - /home/user/media-server/media/tv:/tv
+      - /home/user/media-server/torrents:/downloads
+    ports:
+      - 8989:8989
+    restart: unless-stopped
+  radarr:
+    image: lscr.io/linuxserver/radarr:latest
+    container_name: radarr
+    environment:
+      - PUID=1000
+      - PGID=1000
+      - TZ=America/Argentina/Mendoza
+    volumes:
+      - /home/user/media-server/radarr:/config
+      - /home/user/media-server/media/movies:/movies
+      - /home/user/media-server/torrents:/downloads
+    ports:
+      - 7878:7878
+    restart: unless-stopped
+  lidarr:
+    image: lscr.io/linuxserver/lidarr:latest
+    container_name: lidarr
+    environment:
+      - PUID=1000
+      - PGID=1000
+      - TZ=America/Argentina/Mendoza
+    volumes:
+      - /home/user/media-server/lidarr:/config
+      - /home/user/media-server/media/music:/music
+      - /home/user/media-server/torrents:/downloads
+    ports:
+      - 8686:8686
+    restart: unless-stopped
+  qbittorrent:
+    image: lscr.io/linuxserver/qbittorrent:latest
+    container_name: qbittorrent
+    environment:
+      - PUID=1000
+      - PGID=1000
+      - TZ=America/Argentina/Mendoza
+      - WEBUI_PORT=8080
+    volumes:
+      - /home/user/media-server/qb:/config
+      - /home/user/media-server/torrents:/downloads
+    ports:
+      - 8080:8080
+      - 6881:6881
+      - 6881:6881/udp
+    restart: unless-stopped
+  jellyseerr:
+    image: fallenbagel/jellyseerr:latest
+    container_name: jellyseerr
+    environment:
+      - LOG_LEVEL=debug
+      - TZ=America/Argentina/Mendoza
+    ports:
+      - 5055:5055
+    volumes:
+      - /home/user/media-server/jellyseerr:/app/config
+    restart: unless-stopped
+  prowlarr:
+    image: lscr.io/linuxserver/prowlarr:latest
+    container_name: prowlarr
+    environment:
+      - PUID=1000
+      - PGID=1000
+      - TZ=America/Argentina/Mendoza
+    volumes:
+      - /home/user/media-server/prowlarr:/config
+    ports:
+      - 9696:9696
+    restart: unless-stopped
+  homepage:
+    image: ghcr.io/gethomepage/homepage:latest
+    container_name: homepage
+    environment:
+      PUID: 1000
+      PGID: 1000
+    ports:
+      - 8080:3000
+    volumes:
+      - /home/user/homepage:/app/config # Make sure your local config directory exists
+      - /var/run/docker.sock:/var/run/docker.sock:ro # optional, for docker integrations
+    restart: unless-stopped
+  file-browser:
+    image: filebrowser/filebrowser:latest
+    container_name: file-browser
+    ports:
+      - 8081:80
+    volumes:
+      - /:/srv
+      - /home/user/media-server/file-b/filebrowser.db:/database.db
+      - /home/user/media-server/file-b/.filebrowser.json:/.filebrowser.json
+    restart: unless-stopped
