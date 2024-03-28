@@ -30,9 +30,9 @@ services:
       - PGID=1000
       - TZ=America/Argentina/Mendoza
     volumes:
-      - /home/brockar/media-server/sonarr:/config
-      - /home/brockar/media-server/media/tv:/tv
-      - /home/brockar/media-server/torrents:/downloads
+      - /home/user/media-server/sonarr:/config
+      - /home/user/media-server/media/tv:/tv
+      - /home/user/media-server/torrents:/downloads
     ports:
       - 8989:8989
     restart: unless-stopped
@@ -44,9 +44,9 @@ services:
       - PGID=1000
       - TZ=America/Argentina/Mendoza
     volumes:
-      - /home/brockar/media-server/radarr:/config
-      - /home/brockar/media-server/media/movies:/movies
-      - /home/brockar/media-server/torrents:/downloads
+      - /home/user/media-server/radarr:/config
+      - /home/user/media-server/media/movies:/movies
+      - /home/user/media-server/torrents:/downloads
     ports:
       - 7878:7878
     restart: unless-stopped
@@ -58,9 +58,9 @@ services:
       - PGID=1000
       - TZ=America/Argentina/Mendoza
     volumes:
-      - /home/brockar/media-server/lidarr:/config
-      - /home/brockar/media-server/media/music:/music
-      - /home/brockar/media-server/torrents:/downloads
+      - /home/user/media-server/lidarr:/config
+      - /home/user/media-server/media/music:/music
+      - /home/user/media-server/torrents:/downloads
     ports:
       - 8686:8686
     restart: unless-stopped
@@ -73,8 +73,8 @@ services:
       - TZ=America/Argentina/Mendoza
       - WEBUI_PORT=8080
     volumes:
-      - /home/brockar/media-server/qb:/config
-      - /home/brockar/media-server/torrents:/downloads
+      - /home/user/media-server/qb:/config
+      - /home/user/media-server/torrents:/downloads
     ports:
       - 8080:8080
       - 6881:6881
@@ -89,8 +89,8 @@ services:
       - TZ=America/Argentina/Mendoza
       - AUTO_UPDATE=true #optional
     volumes:
-      - /home/brockar/media-server/jackett:/config
-      - /home/brockar/media-server/torrents:/downloads
+      - /home/user/media-server/jackett:/config
+      - /home/user/media-server/torrents:/downloads
     ports:
       - 9117:9117
     restart: unless-stopped
@@ -137,16 +137,16 @@ services:
       net.ipv4.conf.all.src_valid_mark: "1"
       net.ipv4.ip_forward: "1"
     volumes:
-      - /home/brockar/media-server/wireguard:/etc/wireguard
+      - /home/user/media-server/wireguard:/etc/wireguard
     restart: unless-stopped
   jellyseerr:
-       image: fallenbagel/jellyseerr:latest
-       container_name: jellyseerr
-       environment:
-            - LOG_LEVEL=debug
-            - TZ=America/Argentina/Mendoza
-       ports:
-            - 5055:5055
-       volumes:
-            - /home/brockar/media-server/jellyseerr:/app/config
-       restart: unless-stopped
+    image: fallenbagel/jellyseerr:latest
+    container_name: jellyseerr
+    environment:
+      - LOG_LEVEL=debug
+      - TZ=America/Argentina/Mendoza
+    ports:
+      - 5055:5055
+    volumes:
+      - /home/user/media-server/jellyseerr:/app/config
+    restart: unless-stopped
