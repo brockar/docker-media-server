@@ -1,4 +1,3 @@
-version: "3.7"
 services:
   jellyfin:
     image: lscr.io/linuxserver/jellyfin:latest
