@@ -109,7 +109,7 @@ services:
       PUID: 1000
       PGID: 1000
     ports:
-      - 8080:3000
+      - 80:3000
     volumes:
       - /home/user/homepage:/app/config # Make sure your local config directory exists
       - /var/run/docker.sock:/var/run/docker.sock:ro # optional, for docker integrations
