@@ -101,7 +101,7 @@ Modify also wg-easy password and host.
 Here we have all ready, now just
 
 ```bash
-docker-compose up -d
+docker compose up -d
 ```
 
 U can enter into apps from CasaOS or `ip:port`.
