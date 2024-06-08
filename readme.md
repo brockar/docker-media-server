@@ -1,7 +1,8 @@
 - [Resume](#resume)
 - [Recommended](#recommended)
 - [Requirements](#requirements)
-  - [Install CasaOS](#install-casaos)
+  - [Install docker and docker-compose](#install-docker-and-docker-compose)
+    - [Permissions](#permissions)
   - [Install the rest of apps](#install-the-rest-of-apps)
   - [Static ip](#static-ip)
 - [Config to auto download.](#config-to-auto-download)
@@ -10,16 +11,13 @@
   - [Radarr / (Movies)](#radarr--movies)
   - [Download](#download)
   - [Enjoy your content (and seed it!).](#enjoy-your-content-and-seed-it)
+- [Backup](#backup)
 - [How to use](#how-to-use)
-  - [File sharing and backup](#file-sharing-and-backup)
   - [Media](#media)
+  - [Backup](#backup-1)
 - [Extra](#extra)
   - [Portainer](#portainer)
     - [Logging In](#logging-in)
-  - [Install docker and docker-compose](#install-docker-and-docker-compose)
-    - [docker](#docker)
-    - [docker-compose](#docker-compose)
-    - [Permissions](#permissions)
   - [laptop](#laptop)
 
 # Resume
@@ -45,23 +43,38 @@ Multimedia:
 - [debian/debian based distro](https://brockar.github.io/easy-download-debian/)
 - [your user with sudo](https://gcore.com/learning/how-to-add-user-to-sudoers-in-debian/)
 - git and curl (`sudo apt install git curl`)
-- docker and docker compose. [CasaOS](#install-casaos) or [Standalone](#install-docker-and-docker-compose)
+- docker and docker compose [here](#install-docker-and-docker-compose).
 - [Static ip](#static-ip)
 
 ---
 
-## Install CasaOS
+## Install docker and docker-compose
 
-[CasaOS](https://casaos.io/) is a open source personal could system.  
-CasaOS auto install docker, but If u don't want CasaOS, [Install docker and docker compose](#install-docker-and-docker-compose).
+[resource](https://docs.docker.com/engine/install/debian/).  
+Run the following command to uninstall all conflicting packages:
 
-To install CasaOS just run
+1. Run the following command
 
 ```bash
-curl -fsSL https://get.casaos.io | sudo bash
+curl -fsSL https://get.docker.com -o get-docker.sh
+sudo sh ./get-docker.sh --dry-run
 ```
 
-and it will install all auto.
+2. Verify that the Docker Engine installation is successful by running the hello-world image.
+
+```bash
+sudo docker run hello-world
+```
+
+### Permissions
+
+Add your user to the docker group
+
+```bash
+sudo usermod -a -G docker $USER
+```
+
+Logout and logging
 
 ## Install the rest of apps
 
@@ -78,25 +91,23 @@ My directory organization is as follows:
 /home/user/
 ├── backup
 └── media-server
-    ├── jackett
+    ├── file-b
+    ├── homepage
     ├── jellyfin
+    ├── jellyseerr
     ├── lidarr
     ├── media
     │   ├── movies
     │   ├── music
     │   └── tv
-    ├── portainer
-    ├── qb
+    ├── prowlarr
     ├── radarr
+    ├── rtorrent
     ├── sonarr
-    ├── torrents
-    └── wireguard
+    └── torrents
 ```
 
 Modify the docker compose with your paths, on each `volumes:` on each container.
-Modify also wg-easy password and host.
-
----
 
 Here we have all ready, now just
 
@@ -104,7 +115,8 @@ Here we have all ready, now just
 docker compose up -d
 ```
 
-U can enter into apps from CasaOS or `ip:port`.
+U can enter into apps from homepage or `ip:port`.  
+[Homepage Wiki](https://gethomepage.dev/latest/configs/settings/).
 
 ## Static ip
 
@@ -151,18 +163,14 @@ iface enp1s0 inet static
 
 ## General
 
-Configure **Jackett** (localhost:9117) to obtain the indexers (from where the torrents are obtained).  
+Configure **Prowlarr** (localhost:9696) to obtain the indexers (from where the torrents are obtained).  
 Add some (1337x, EZTV for example) and save them.
 
 From this page we are going to grab the Torznab Feed and the KEY API for Sonarr, Radarr and Lidarr.
 
-Configure **qBitorrent** to download at the speeds you want at the times you want.  
+Configure **ruTorrent** as you want. I recommend the "MaterialDesign" theme.  
+Downloads > Default directory for downloads: /downloads/  
 (localhost:8080)
-
-Configuration > Speed > Alternative speed limits.  
-Select the speeds.  
-Check `Schedule the use of alternative rate limits` and select the schedules.  
-Save it.
 
 ## Sonarr / (TV/Series)
 
@@ -186,20 +194,62 @@ You can view the status of downloads in the applications themselves or in qBitto
 
 ## Enjoy your content (and seed it!).
 
-at http://localhost:8097 or on your TV / Mobile.
+at http://localhost:8096 or on your TV / Mobile.
+
+---
+
+# Backup
+
+[resource](https://reintech.io/blog/installing-configuring-samba-debian-12)
+
+Install samba  
+`sudo apt install samba samba-common-bin`
+
+change smb.conf to share the folder
+
+```
+sudo cp /etc/samba/smb.conf /etc/samba/smb.conf.backup
+sudo nano /etc/samba/smb.conf
+```
+
+At the end of the file add:
+
+```
+[share-name]
+   path = /home/user/backup
+   browseable = Yes
+   read only = No
+   wins support= Yes
+```
+
+Finally
+
+```
+sudo systemctl restart smbd
+```
+
+and log in with your linux user.
 
 # How to use
-
-## File sharing and backup
-
-On CasaOS, **Files** app u can select and share folders on your network (it uses **samba**).  
-I **recommend** use `/home/user/` and not `/DATA/`.
 
 ## Media
 
 Search for the content you want to download in its respective application.  
 Wait for it to download.  
 Watch it on Jellyfin.
+
+## Backup
+
+To add the folder on linux, just connect to `smb://ip/share-name`.  
+[Or can mount as a folder](https://jlsmorilloblog.wordpress.com/2017/06/25/montar-carpeta-de-red-en-linux/).
+
+On Windows, in the explorer (This PC > `...`) you can:
+
+- Connect to a media server
+- Add a network location
+- Map network drive
+
+with `\\ip\share-name`
 
 # Extra
 
@@ -231,58 +281,9 @@ Now that the installation is complete, you can log into your Portainer Server in
 https://localhost:9443
 ```
 
-You can add this `docker-compose.yaml` to **App Template** and deploy.
+You can add this `docker-compose.yml` to **App Template** and deploy.
 
 Done!.
-
-## Install docker and docker-compose
-
-### docker
-
-[resource](https://docs.docker.com/engine/install/debian/).
-
-Run the following command to uninstall all conflicting packages:
-
-```bash
-for pkg in docker.io docker-doc docker-compose podman-docker containerd runc; do sudo apt-get remove $pkg; done
-```
-
-1. Run docker installation script:
-
-```
-curl -sSL https://get.docker.com | sh
-```
-
-
-2. Verify that the Docker Engine installation is successful by running the hello-world image.
-
-```bash
-sudo docker run hello-world
-```
-
-### docker-compose
-
-[resource](https://docs.docker.com/compose/install/standalone/).
-
-1. To download and install Compose standalone, run:
-
-```bash
-curl -SL https://github.com/docker/compose/releases/download/v2.24.6/docker-compose-linux-x86_64 -o /usr/local/bin/docker-compose
-sudo ln -s /usr/local/bin/docker-compose /usr/bin/docker-compose
-```
-
-2. Apply executable permissions to the standalone binary in the target path for the installation.
-3. Test and execute compose commands using `docker-compose`.
-
-### Permissions
-
-Add your user to the docker group
-
-```bash
-sudo usermod -a -G docker $USER
-```
-
-Logout and logging
 
 ## laptop
 
