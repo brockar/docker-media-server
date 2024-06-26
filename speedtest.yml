@@ -12,7 +12,7 @@ services:
             - APP_KEY= #https://speedtest-tracker.dev/
             - APP_TIMEZONE=America/Argentina/Mendoza
             - DISPLAY_TIMEZONE=America/Argentina/Mendoza
-            - SPEEDTEST_SCHEDULE="0 * * * *"
+            - SPEEDTEST_SCHEDULE="0 * * * *" #hourly
         volumes:
             - /home/user/docker/speedtest/config:/config
             - /home/user/docker/speedtest/keys:/config/keys
