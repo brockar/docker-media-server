@@ -1,0 +1,20 @@
+services:
+    speedtest-tracker:
+        container_name: speedtest-tracker
+        ports:
+            - 8442:80
+            - 8443:443
+        environment:
+            - PUID=1000
+            - PGID=1000
+            - DB_CONNECTION=sqlite
+#            - TELEGRAM_BOT_TOKEN=
+            - APP_KEY= #https://speedtest-tracker.dev/
+            - APP_TIMEZONE=America/Argentina/Mendoza
+            - DISPLAY_TIMEZONE=America/Argentina/Mendoza
+            - SPEEDTEST_SCHEDULE="0 * * * *"
+        volumes:
+            - /home/user/docker/speedtest/config:/config
+            - /home/user/docker/speedtest/keys:/config/keys
+        image: lscr.io/linuxserver/speedtest-tracker:latest
+        restart: unless-stopped
