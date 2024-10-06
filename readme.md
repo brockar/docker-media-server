@@ -177,7 +177,7 @@ From this app, we are going to sync our trackers in Sonarr, Radarr, and Lidarr. 
 
 Configure **qBittorrent/ruTorrent** as you want.
 I recommend the "MaterialDesign" theme for ruTorrent and VueTorrent for qBittorrent.  
-Downloads > Default directory for downloads: data/downloads/  
+Downloads > Default directory for downloads: data/torrents/  
 [localhost:8080](localhost:8080)
 
 **Sonarr / (TV/Series)**

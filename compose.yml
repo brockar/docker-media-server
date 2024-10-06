@@ -9,9 +9,9 @@ services:
       - PGID=1000
       - TZ=${TZ}
     volumes:
-      - ${MEDIA_SERVER_PATH}/jellyfin/config:/config
-      - ${MEDIA_SERVER_PATH}/media/tv:/data/tv
-      - ${MEDIA_SERVER_PATH}/media/movies:/data/movies
+      - ${MEDIA_SERVER_PATH}/docker/jellyfin/config:/config
+      - ${MEDIA_SERVER_PATH}/data/media/tv:/data/tv
+      - ${MEDIA_SERVER_PATH}/data/media/movies:/data/movies
     ports:
       - 8096:8096
       - 8920:8920
@@ -29,8 +29,8 @@ services:
       - WEBUI_PORT=8080
       - DOCKER_MODS=ghcr.io/vuetorrent/vuetorrent-lsio-mod:latest
     volumes:
-      - ${MEDIA_SERVER_PATH}/qb:/config
-      - ${MEDIA_SERVER_PATH}/torrents:/data/downloads
+      - ${MEDIA_SERVER_PATH}/docker/qb:/config
+      - ${MEDIA_SERVER_PATH}/data/torrents:/data/torrents
     ports:
       - 8080:8080
       - 6881:6881
@@ -49,12 +49,12 @@ services:
   #   environment:
   #     - PUID=1000
   #     - PGID=1000
-  #     - TZ=America/Argentina/Mendoza
+  #     - TZ=${TZ}
   #   volumes:
-  #     - "${MEDIA_SERVER_PATH}/torrents:/downloads"
-  #     - "${MEDIA_SERVER_PATH}/rtorrent/data:/data"
-  #     - "${MEDIA_SERVER_PATH}/rtorrent/password:/passwd"
-  #     - "${MEDIA_SERVER_PATH}/rtorrent/temp:/tmp"
+  #     - "${MEDIA_SERVER_PATH}/data/torrents:/data/torrents"
+  #     - "${MEDIA_SERVER_PATH}/docker/rtorrent/data:/data"
+  #     - "${MEDIA_SERVER_PATH}/docker/rtorrent/password:/passwd"
+  #     - "${MEDIA_SERVER_PATH}/docker/rtorrent/temp:/tmp"
   #   restart: always
   #   network_mode: bridge
 
@@ -67,7 +67,7 @@ services:
       - PGID=1000
       - TZ=${TZ}
     volumes:
-      - ${MEDIA_SERVER_PATH}/prowlarr:/config
+      - ${MEDIA_SERVER_PATH}/docker/prowlarr:/config
     ports:
       - 9696:9696
     restart: unless-stopped
@@ -80,9 +80,9 @@ services:
       - PGID=1000
       - TZ=${TZ}
     volumes:
-      - ${MEDIA_SERVER_PATH}/sonarr:/config
-      - ${MEDIA_SERVER_PATH}/media/tv:/data/tv
-      - ${MEDIA_SERVER_PATH}/torrents:/data/downloads
+      - ${MEDIA_SERVER_PATH}/docker/sonarr:/config
+      - ${MEDIA_SERVER_PATH}/data/media/tv:/data/tv
+      - ${MEDIA_SERVER_PATH}/data/torrents:/data/downloads
     ports:
       - 8989:8989
     restart: unless-stopped
@@ -95,9 +95,9 @@ services:
       - PGID=1000
       - TZ=${TZ}
     volumes:
-      - ${MEDIA_SERVER_PATH}/radarr:/config
-      - ${MEDIA_SERVER_PATH}/media/movies:/data/movies
-      - ${MEDIA_SERVER_PATH}/torrents:/data/downloads
+      - ${MEDIA_SERVER_PATH}/docker/radarr:/config
+      - ${MEDIA_SERVER_PATH}/data/media/movies:/data/movies
+      - ${MEDIA_SERVER_PATH}/data/torrents:/data/torrents
     ports:
       - 7878:7878
     restart: unless-stopped
@@ -109,9 +109,9 @@ services:
       - PGID=1000
       - TZ=${TZ}
     volumes:
-      - ${MEDIA_SERVER_PATH}/lidarr:/config
-      - ${MEDIA_SERVER_PATH}/media/music:/music
-      - ${MEDIA_SERVER_PATH}/torrents:/data/downloads
+      - ${MEDIA_SERVER_PATH}/docker/lidarr:/config
+      - ${MEDIA_SERVER_PATH}/data/media/music:/data/music
+      - ${MEDIA_SERVER_PATH}/data/torrents:/data/torrents
     ports:
       - 8686:8686
     restart: unless-stopped
@@ -124,7 +124,7 @@ services:
     ports:
       - 5055:5055
     volumes:
-      - ${MEDIA_SERVER_PATH}/jellyseerr:/app/config
+      - ${MEDIA_SERVER_PATH}/docker/jellyseerr:/app/config
     restart: unless-stopped
 
   ## Homepage
@@ -137,6 +137,6 @@ services:
     ports:
       - 80:3000
     volumes:
-      - ${MEDIA_SERVER_PATH}/homepage:/app/config # Make sure your local config directory exists
+      - ${MEDIA_SERVER_PATH}/docker/homepage:/app/config # Make sure your local config directory exists
       - /var/run/docker.sock:/var/run/docker.sock:ro # optional, for docker integrations
     restart: unless-stopped
