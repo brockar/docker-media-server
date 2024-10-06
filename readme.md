@@ -2,7 +2,7 @@
 - [Summary](#summary)
 - [Recommended Setup](#recommended-setup)
 - [Requirements](#requirements)
-  - [Installing Docker and Docker-Compose](#installing-docker-and-docker-compose)
+  - [Installing Docker and Docker Compose](#installing-docker-and-docker-compose)
     - [Permissions](#permissions)
   - [Install the rest of apps](#install-the-rest-of-apps)
   - [Static IP](#static-ip)
