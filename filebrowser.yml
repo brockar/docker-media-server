@@ -1,0 +1,11 @@
+services:
+  file-browser:
+    image: filebrowser/filebrowser:latest
+    container_name: file-browser
+    ports:
+      - 8081:80
+    volumes:
+      - /:/srv
+      - ${MEDIA_SERVER_PATH}/file-b/filebrowser.db:/database.db
+      - ${MEDIA_SERVER_PATH}/file-b/.filebrowser.json:/.filebrowser.json
+    restart: unless-stopped

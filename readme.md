@@ -1,3 +1,4 @@
+<!--toc:start-->
 - [Resume](#resume)
 - [Recommended](#recommended)
 - [Requirements](#requirements)
@@ -5,20 +6,20 @@
     - [Permissions](#permissions)
   - [Install the rest of apps](#install-the-rest-of-apps)
   - [Static ip](#static-ip)
-- [Config to auto download.](#config-to-auto-download)
+- [Config auto download](#config-auto-download)
   - [General](#general)
-  - [Sonarr / (TV/Series)](#sonarr--tvseries)
-  - [Radarr / (Movies)](#radarr--movies)
   - [Download](#download)
-  - [Enjoy your content (and seed it!).](#enjoy-your-content-and-seed-it)
-- [Backup](#backup)
+  - [Enjoy your content (and seed it!)](#enjoy-your-content-and-seed-it)
+- [Backup Samba](#backup-samba)
 - [How to use](#how-to-use)
   - [Media](#media)
-  - [Backup](#backup-1)
-- [Extra](#extra)
+  - [Backup](#backup)
+- [Extras](#extras)
+  - [Nice-to-have containers](#nice-to-have-containers)
   - [Portainer](#portainer)
     - [Logging In](#logging-in)
   - [laptop](#laptop)
+<!--toc:end-->
 
 # Resume
 
@@ -32,10 +33,10 @@ Multimedia:
 # Recommended
 
 - Set this up on a laptop or cpu that you don't use and can be on all day.
-- Install Debian without GUI (GNOME), this will consume less resources and you won't need it.
-- For the system you only need 30gb, the rest will be for your files.
+- Install Debian without GUI, this will consume less resources and you won't need it.
+- For the system you only need 30GiB, the rest will be for your files.
 - Connect the laptop/pc via ethernet, wifi can get slow or slow down your wifi for all other uses.
-- Do not open ports, use WireGuard.
+- Do not open ports, use [WireGuard](https://www.wireguard.com/)/[Tailscale](https://tailscale.com/).
 - Seed the files at least 1.0 ratio.
 
 # Requirements
@@ -51,9 +52,11 @@ Multimedia:
 ## Install docker and docker-compose
 
 [resource](https://docs.docker.com/engine/install/debian/).  
+(u can try [podman](https://podman.io/))  
+
 Run the following command to uninstall all conflicting packages:
 
-1. Run the following command
+1. Installation
 
 ```bash
 curl -fsSL https://get.docker.com -o get-docker.sh
@@ -71,7 +74,7 @@ sudo docker run hello-world
 Add your user to the docker group
 
 ```bash
-sudo usermod -a -G docker $USER
+sudo usermod -aG docker $USER
 ```
 
 Logout and logging
@@ -90,24 +93,26 @@ My directory organization is as follows:
 ```text
 /home/user/
 ├── backup
-└── media-server
+├── data
+│   ├── media
+│   │   ├── movies
+│   │   ├── music
+│   │   └── tv
+│   └── torrents
+└── docker
     ├── file-b
     ├── homepage
     ├── jellyfin
     ├── jellyseerr
     ├── lidarr
-    ├── media
-    │   ├── movies
-    │   ├── music
-    │   └── tv
     ├── prowlarr
-    ├── radarr
-    ├── rtorrent
-    ├── sonarr
-    └── torrents
+    └── sonarr
 ```
 
-Modify the docker compose with your paths, on each `volumes:` on each container.
+Use `create_subfolders.sh` to auto create this paths.
+
+Modify the docker compose with your paths, on `volumes:` on each container.  
+Or use `.env.example` with your path.
 
 Here we have all ready, now just
 
@@ -116,6 +121,8 @@ docker compose up -d
 ```
 
 U can enter into apps from homepage or `ip:port`.  
+
+I use Homepage to collect all the links to the pages.
 [Homepage Wiki](https://gethomepage.dev/latest/configs/settings/).
 
 ## Static ip
@@ -129,7 +136,7 @@ Look for enXXX: inet , for example eno1 o enp1s0: `192.168.100.X`.
 Now configure to static your ip
 
 ```bash
-sudo nano /etc/network/interfaces
+sudo vim /etc/network/interfaces
 ```
 
 from
@@ -159,53 +166,48 @@ iface enp1s0 inet static
   gateway 192.168.100.1 # The same as your initial ip but with an 1 at the least
 ```
 
-# Config to auto download.
+# Config auto download
 
 ## General
 
-Configure **Prowlarr** (localhost:9696) to obtain the indexers (from where the torrents are obtained).  
+Configure **Prowlarr** ([localhost:9696](localhost:9696)) to obtain the indexers (from where the torrents are obtained).  
 Add some (1337x, EZTV for example) and save them.
 
-From this page we are going to grab the Torznab Feed and the KEY API for Sonarr, Radarr and Lidarr.
+From this app, we are going to sync our trackers in Sonarr, Radarr, and Lidarr. You must to configure that.
 
-Configure **ruTorrent** as you want. I recommend the "MaterialDesign" theme.  
-Downloads > Default directory for downloads: /downloads/  
-(localhost:8080)
+Configure **qBittorrent/ruTorrent** as you want.
+I recommend the "MaterialDesign" theme for ruTorrent and VueTorrent for qBittorrent.  
+Downloads > Default directory for downloads: data/downloads/  
+[localhost:8080](localhost:8080)
 
-## Sonarr / (TV/Series)
+**Sonarr / (TV/Series)**
+[localhost:8989](localhost:8989)  
 
-(localhost:8989)  
-Settings > Indexers.  
-Add the indexers from Jackett.  
-Just select TVs, not movies.
+**Radarr / (Movies)**
+[localhost:7878](localhost:7878/)  
 
-You can also configure the rest as you wish.
-
-## Radarr / (Movies)
-
-(localhost:7878/)  
-Do the same as in Sonar but with series.
+Set up both following the recommendations from [TrashGuide](https://trash-guides.info/).
 
 ## Download
 
 Now you just have to add the series (Sonarr) you want to watch and the movies (Radarr) or music (Lidarr).
 
-You can view the status of downloads in the applications themselves or in qBittorrent.
+You can view the status of downloads in the applications themselves or in qBittorrent/ruTorrent.
 
-## Enjoy your content (and seed it!).
+## Enjoy your content (and seed it!)
 
-at http://localhost:8096 or on your TV / Mobile.
+at <http://localhost:8096> or on your TV / Mobile.
 
 ---
 
-# Backup
+# Backup Samba
 
 [resource](https://reintech.io/blog/installing-configuring-samba-debian-12)
 
 Install samba  
 `sudo apt install samba samba-common-bin`
 
-change smb.conf to share the folder
+change `smb.conf` to share the folder
 
 ```
 sudo cp /etc/samba/smb.conf /etc/samba/smb.conf.backup
@@ -228,7 +230,7 @@ Finally
 sudo systemctl restart smbd
 ```
 
-and log in with your linux user.
+and log in with your linux user from Linux/Windows/Android/iOS.
 
 # How to use
 
@@ -251,7 +253,21 @@ On Windows, in the explorer (This PC > `...`) you can:
 
 with `\\ip\share-name`
 
-# Extra
+# Extras
+
+## Nice-to-have containers
+
+In the repository, there are several containers that might be useful to you.  
+I'll share their respective websites, and you can run them simply like this:  
+
+```bash
+docker compose -f conainer.yml up -d
+```
+
+- [filebrowser](https://filebrowser.org/installation)
+- [glances](https://glances.readthedocs.io/en/latest/docker.html)
+- [pi-hole](https://pi-hole.net/)
+- [speedtest](https://github.com/alexjustesen/speedtest-tracker)
 
 ## Portainer
 
@@ -303,4 +319,4 @@ sudo nano /etc/systemd/logind.conf
 ```
 
 and change `#HandleLidSwitch=suspend` to  
-HandleLidSwitch=ignore
+`HandleLidSwitch=ignore`

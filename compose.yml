@@ -19,6 +19,44 @@ services:
       - 1900:1900/udp
     network_mode: bridge
     restart: unless-stopped
+  qbittorrent:
+    image: lscr.io/linuxserver/qbittorrent:latest
+    container_name: qbittorrent
+    environment:
+      - PUID=1000
+      - PGID=1000
+      - TZ=${TZ}
+      - WEBUI_PORT=8080
+      - DOCKER_MODS=ghcr.io/vuetorrent/vuetorrent-lsio-mod:latest
+    volumes:
+      - ${MEDIA_SERVER_PATH}/qb:/config
+      - ${MEDIA_SERVER_PATH}/torrents:/data/downloads
+    ports:
+      - 8080:8080
+      - 6881:6881
+      - 6881:6881/udp
+    restart: unless-stopped
+    # Other torrent manager
+  # rtorrent:
+  #   container_name: rtorrent
+  #   image: crazymax/rtorrent-rutorrent:latest
+  #   ports:
+  #     - "8080:8080"
+  #     - "6881:6881"
+  #     - "8000:8000"
+  #     - "9000:9000"
+  #     - "50000:50000"
+  #   environment:
+  #     - PUID=1000
+  #     - PGID=1000
+  #     - TZ=America/Argentina/Mendoza
+  #   volumes:
+  #     - "${MEDIA_SERVER_PATH}/torrents:/downloads"
+  #     - "${MEDIA_SERVER_PATH}/rtorrent/data:/data"
+  #     - "${MEDIA_SERVER_PATH}/rtorrent/password:/passwd"
+  #     - "${MEDIA_SERVER_PATH}/rtorrent/temp:/tmp"
+  #   restart: always
+  #   network_mode: bridge
 
   ## Trackers
   prowlarr:
@@ -77,43 +115,6 @@ services:
     ports:
       - 8686:8686
     restart: unless-stopped
-  qbittorrent:
-    image: lscr.io/linuxserver/qbittorrent:latest
-    container_name: qbittorrent
-    environment:
-      - PUID=1000
-      - PGID=1000
-      - TZ=${TZ}
-      - WEBUI_PORT=8080
-    volumes:
-      - ${MEDIA_SERVER_PATH}/qb:/config
-      - ${MEDIA_SERVER_PATH}/torrents:/data/downloads
-    ports:
-      - 8080:8080
-      - 6881:6881
-      - 6881:6881/udp
-    restart: unless-stopped
-  # rtorrent:
-  #   container_name: rtorrent
-  #   image: crazymax/rtorrent-rutorrent:latest
-  #   ports:
-  #     - "8080:8080"
-  #     - "6881:6881"
-  #     - "8000:8000"
-  #     - "9000:9000"
-  #     - "50000:50000"
-  #   environment:
-  #     - PUID=1000
-  #     - PGID=1000
-  #     - TZ=America/Argentina/Mendoza
-  #   volumes:
-  #     - "${MEDIA_SERVER_PATH}/torrents:/downloads"
-  #     - "${MEDIA_SERVER_PATH}/rtorrent/data:/data"
-  #     - "${MEDIA_SERVER_PATH}/rtorrent/password:/passwd"
-  #     - "${MEDIA_SERVER_PATH}/rtorrent/temp:/tmp"
-  #   restart: always
-  #   network_mode: bridge
-
   jellyseerr:
     image: fallenbagel/jellyseerr:latest
     container_name: jellyseerr
@@ -138,42 +139,4 @@ services:
     volumes:
       - ${MEDIA_SERVER_PATH}/homepage:/app/config # Make sure your local config directory exists
       - /var/run/docker.sock:/var/run/docker.sock:ro # optional, for docker integrations
-    restart: unless-stopped
-
-  ## Glances for monitoring resources
-  reverse-proxy:
-    image: traefik:alpine
-    command: --api --docker
-    ports:
-      - "61208:80"
-      - "61209:8080"
-    volumes:
-      - /var/run/docker.sock:/var/run/docker.sock
-  whoami:
-    image: emilevauge/whoami
-    labels:
-      - "traefik.frontend.rule=Host:whoami.docker.localhost"
-  monitoring:
-    image: nicolargo/glances:latest
-    restart: always
-    pid: host
-    volumes:
-      - /var/run/docker.sock:/var/run/docker.sock
-      - /etc/os-release:/etc/os-release:ro
-    environment:
-      - "GLANCES_OPT=-w"
-      - TZ="${TZ}"
-    labels:
-      - "traefik.port=61208"
-      - "traefik.frontend.rule=Host:glances.docker.localhost"
-
-  file-browser:
-    image: filebrowser/filebrowser:latest
-    container_name: file-browser
-    ports:
-      - 8081:80
-    volumes:
-      - /:/srv
-      - ${MEDIA_SERVER_PATH}/file-b/filebrowser.db:/database.db
-      - ${MEDIA_SERVER_PATH}/file-b/.filebrowser.json:/.filebrowser.json
     restart: unless-stopped
